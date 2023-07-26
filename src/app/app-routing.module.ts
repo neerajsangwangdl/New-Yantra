@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 // import { PdfMakerModule } from './modules/pdf-maker/pdf-maker.module';
 //import { Authguard } from './services/authGuard';
+import { Authguard } from './services/shared/authGuard';
 
 const routes: Routes = [
   // App Routes goes here
@@ -9,6 +10,12 @@ const routes: Routes = [
     path: 'customer',
     loadChildren: () =>
       import('./modules/user/user.module').then(m => m.UserModule)
+  },
+  {
+    path: 'products',
+    canActivate: [Authguard],
+    loadChildren: () =>
+    import('./modules/layout/layout.module').then(m => m.LayoutModule)
   },
 
 

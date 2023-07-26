@@ -27,6 +27,9 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 // import { CreditDebitService } from './services/credit-debit.service';
 import { RouterModule } from '@angular/router';
 import { YantraInterceptor } from './services/shared/http-interceptor.service';
+import { ProductInsertComponent } from './modules/employee-access/product-insert/product-insert.component';
+import { UserModule } from './modules/user/user.module';
+import { CustomerService } from './modules/user/customer.service';
 
 
 // import { MdCardModule } from '@angular/material';
@@ -34,6 +37,8 @@ import { YantraInterceptor } from './services/shared/http-interceptor.service';
 @NgModule({
   declarations: [
     AppComponent,
+    ProductInsertComponent,
+  
     
   
   ],
@@ -46,6 +51,7 @@ import { YantraInterceptor } from './services/shared/http-interceptor.service';
     BrowserAnimationsModule,
     SharedModule,
     ToastrModule.forRoot(),
+    UserModule,
     //InfiniteScrollModule,
     RouterModule,
   
@@ -67,7 +73,8 @@ import { YantraInterceptor } from './services/shared/http-interceptor.service';
     //Authguard, 
     GlobalService,
     { provide: HTTP_INTERCEPTORS, useClass: YantraInterceptor, multi: true }, 
-    DatePipe, 
+    DatePipe,
+    CustomerService 
     //GlobalHttpService,
     //CreditDebitService
   ],
