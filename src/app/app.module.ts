@@ -26,10 +26,13 @@ import { HttpApiService } from './services/shared/http.service';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 // import { CreditDebitService } from './services/credit-debit.service';
 import { RouterModule } from '@angular/router';
-import { YantraInterceptor } from './services/shared/http-interceptor.service';
+//import { YantraInterceptor } from './services/shared/http-interceptor.service';
+import { YantraInterceptor } from './services/shared/http-interceptor';
 import { ProductInsertComponent } from './modules/employee-access/product-insert/product-insert.component';
 import { UserModule } from './modules/user/user.module';
 import { CustomerService } from './modules/user/customer.service';
+
+
 
 
 // import { MdCardModule } from '@angular/material';
@@ -38,6 +41,8 @@ import { CustomerService } from './modules/user/customer.service';
   declarations: [
     AppComponent,
     ProductInsertComponent,
+  
+    
   
     
   

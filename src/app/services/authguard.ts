@@ -1,9 +1,12 @@
 import { Injectable, isDevMode } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { DataService } from './data.service';
+//import { DataService } from './Shared/data.service';
+import { DataService } from './shared/data.service';
 @Injectable()
 export class Authguard implements CanActivate {
-  constructor(private dataService: DataService, private router: Router) {}
+  constructor(private dataService: DataService,
+    private router: Router) { }
+
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     // if (!(isDevMode()) && (location.protocol !== 'https:')) {
@@ -18,4 +21,5 @@ export class Authguard implements CanActivate {
     this.router.navigate(['/customer/login']);
     return false;
   }
+
 }

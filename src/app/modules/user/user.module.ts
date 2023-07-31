@@ -5,6 +5,7 @@ import { UserRoutingModule } from './user-routing.module';
 import { LoginComponent } from './login/login.component';
 import { SharedModule } from '../shared/shared.module';
 import { RegisterComponent } from './register/register.component';
+import { AppHeaderComponent } from '../shared/header/header.component';
 //import { AccountComponent } from './account/account.component';
 //import { ContactusComponent } from './contactus/contactus.component';
 //import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-//import { CartProduct } from 'src/app/models/cart-product';
+import { CartProduct } from 'src/app/models/cart-product';
 import { Customer } from 'src/app/models/customer';
-
 
 @Injectable({
   providedIn: 'root'
@@ -32,9 +31,9 @@ export class DataService {
     let isEmptyCart: boolean = localStorage.getItem('Cart') == null;
     let isEmptyBag: boolean = localStorage.getItem('bag') == null;
     this.updateCartItemCount(isEmptyCart ? 0 : JSON.parse(localStorage.getItem('Cart')).length);
-    //this.updateShoppingCart(isEmptyCart ? [] : JSON.parse(localStorage.getItem('Cart')));
+    this.updateShoppingCart(isEmptyCart ? [] : JSON.parse(localStorage.getItem('Cart')));
     this.updateBagCount(isEmptyBag ? 0 : JSON.parse(localStorage.getItem('bag')).length);
-    //this.updateMyBag(isEmptyBag ? [] : JSON.parse(localStorage.getItem('bag')));
+    this.updateMyBag(isEmptyBag ? [] : JSON.parse(localStorage.getItem('bag')));
   }
 
   changeMessage(message: string) {
@@ -45,16 +44,16 @@ export class DataService {
     this.ItemCount.next(count);
   }
 
-  // updateShoppingCart(cartItems: CartProduct[]) {
-  //   this.shoppingCart.next(cartItems);
-  // }
+  updateShoppingCart(cartItems: CartProduct[]) {
+    this.shoppingCart.next(cartItems);
+  }
 
   updateBagCount(count: number) {
     this.BagItemCount.next(count);
   }
-  // updateMyBag(bagItems: CartProduct[]) {
-  //   this.myBag.next(bagItems);
-  // }
+  updateMyBag(bagItems: CartProduct[]) {
+    this.myBag.next(bagItems);
+  }
 
   copyToClip(text: any) {
     navigator.clipboard.writeText(text)
@@ -103,48 +102,3 @@ export class DataService {
   }
 
 }
-
-
-
-// import { Injectable } from '@angular/core';
-// // import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-// //import { CartProduct } from 'src/app/models/cart-product';
-// import { Customer } from 'src/app/models/customer';
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class DataService {
-//   user: any = {};
-
-//   constructor() {}
-
-//   getUserFromLocalStorage() {
-//     this.user = {};
-//     if (localStorage.getItem('token')) {
-//       if (localStorage.getItem('user')) {
-//         localStorage.removeItem('user');
-//       }
-//       if (localStorage.getItem('token').indexOf('customer') > -1) {
-//         localStorage.setItem(
-//           'token',
-//           window.btoa(localStorage.getItem('token'))
-//         );
-//       }
-//       this.user = JSON.parse(window.atob(localStorage.getItem('token')));
-//     } else if (localStorage.getItem('user')) {
-//       this.user = JSON.parse(localStorage.getItem('user'));
-//       this.setUserInLocalStorage(this.user);
-//     }
-//     return this.user;
-//   }
-//   setUserInLocalStorage(data) {
-//     if (data['customer_id']) {
-//       if (localStorage.getItem('user')) {
-//         localStorage.removeItem('user');
-//       }
-//       localStorage.setItem('token', window.btoa(JSON.stringify(data)));
-//       this.getUserFromLocalStorage();
-//     }
-//   }
-// }

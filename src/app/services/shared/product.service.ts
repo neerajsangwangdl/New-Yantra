@@ -10,7 +10,7 @@ import { HttpApiService } from './http.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class  ProductService {
   url = environment.apiUrl || localStorage.getItem('ServerUrl');
   version = environment.VERSION;
   constructor(private http: HttpApiService) {

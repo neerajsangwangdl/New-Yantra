@@ -1,100 +1,166 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
-import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
-import { GlobalService } from './global.service';
-import { HttpApiService } from './http.service';
 import { DataService } from './data.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GlobalHttpService {
+export class GlobalService {
   allowedStatus: any = [5]; // for pending payment calculation
+  nonCancelledStatus: any = [1, 2, 5, 6, 7]; // for pending payment calculation
   user: any;
   constructor(
     private datepipe: DatePipe,
-    private toastr: ToastrService,
-    private http: HttpApiService,
-    private router: Router,
-    private DataService: DataService,
-    public globalService: GlobalService) {
-      this.user = this.DataService.getUserFromLocalStorage();
-      if (this.user) this.getCustomerByIdCall(this.user.customer_id);
+    private dataService: DataService,
+  ) {
+    this.user = this.dataService.getUserFromLocalStorage()
   }
-  saveChildProductHttp(data: any) {
-    return this.http.post(`product/saveChildProduct`, data);
+
+  isLoading = new Subject<boolean>();
+  show() {
+    this.isLoading.next(true);
   }
-  saveChildProduct(product) {
-    var price = prompt('Price batao?');
-    var qty = prompt('quantity batao?');
-    var WarrantyInDays = prompt('Warranty?');
-    if (price && qty) {
-      const data = {
-        price: price,
-        stock: qty,
-        WarrantyInDays: WarrantyInDays || 0,
-        product_id: product.ProductId,
-      }
-      this.saveChildProductHttp(data)
-        .subscribe(res => {
-          if (res['status'] == 200) {
-            this.toastr.success(res['message']);
-            this.router.navigate(['products/product-details/' + res['data']['insertId']]);
-          } else {
-            this.toastr.warning('Error!', res['message']);
-          }
-        })
+  hide() {
+    this.isLoading.next(false);
+  }
+
+  filterByValue(array, string) {
+    return array.filter(o =>
+      Object.keys(o).some(k => o[k] && o[k].toString().includes(string.toLowerCase())));
+  }
+  WarrantyValidator(Warranty, CreatedOn) {
+    let today = new Date();
+    let expirationDate = new Date(CreatedOn);
+    expirationDate.setDate(expirationDate.getDate() + Warranty);
+    if (expirationDate > today) {
+      return true
+    } else {
+      return false
     }
   }
 
-  deleteChildProductHttp(data: any) {
-    return this.http.post(`product/deleteChildProduct`, data);
-  }
-  deleteChildProduct(ProductId) {
-    if (confirm('Are you sure to delete this product?')) {
-      const data = {
-        product_id: ProductId,
-      }
-      this.deleteChildProductHttp(data)
-        .subscribe(res => {
-          if (res['status'] == 200) {
-            this.toastr.success(res['message']);
-          } else {
-            this.toastr.warning('Error!', res['message']);
-          }
-        })
-    }
-  }
+  filterCustomerAndEmployeesbyRole(data, role = []) {
+    const custArr = []
+    const empArr = []
+    for (const Obj of data) {
+      if (Obj.Role) {
+        if (Obj.Role == 10) {
+          custArr.push(Obj)
 
-  saveanalyticsHttp(data: any) {
-    return this.http.post(`analytics/save`, data);
-  }
-
-  saveanalytics(ProductId, description = '') {
-    const data = {
-      description: description || '',
-      product_id: ProductId || 0,
-      customer_id: this.user['customer_id'] || '0',
-    }
-    this.saveanalyticsHttp(data)
-      .subscribe(res => {
-      })
-  }
-
-  getCustomerByIdCall(id) {
-    this.getCustomerById(id)
-      .subscribe(res => {
-        if(res['status'] && res['status'] == 200){
-          this.DataService.setUserInLocalStorage(res.data);
+        } else {
+          empArr.push(Obj)
         }
-      })
+      }
+    }
+    return [custArr, empArr]
   }
 
-  getCustomerById(id){
-    console.log(1, id)
-    return this.http.get(`customer/getCustomerById/${id}`);
+
+  getTotalOfColumn(arr, key) {
+    let total = 0;
+    if (arr && arr.length) {
+      arr.forEach((obj) => {
+        total += obj[key] || 0
+      });
+    }
+    return Math.round(total)
   }
+  sortByFieldName(arr, field, order) {
+    if (order == 'asc') {
+      arr.sort((a, b) => parseFloat(a[field]) - parseFloat(b[field]));;
+    } else {
+      arr.sort((a, b) => parseFloat(b[field]) - parseFloat(a[field]));;
+    }
+    return arr
+  }
+  getArrayofOneColumnOfArrOfObj(arrObj, columnName) {
+    let arr = [];
+    if (arrObj && arrObj.length) {
+      arrObj.forEach((obj) => {
+        arr.push(obj[columnName])
+      });
+    }
+    return arr
+  }
+
+  getTotalOfQtyAndPriceWithColumnName(arr, Qtykey, Pricekey) {
+    let total = 0;
+    if (arr.length) {
+      arr.forEach((obj) => {
+        total += obj[Qtykey] * obj[Pricekey] || 0
+      });
+    }
+    return Math.round(total)
+  }
+
+  getTotalOfNonCancelledOrderWithDeliveryCharges(arr, Qtykey, Pricekey) {
+    let total = 0;
+    let delivey_charges_obj = {}
+    if (arr.length) {
+      arr.forEach((obj) => {
+        if (this.nonCancelledStatus.indexOf(obj.item_status) > -1) {
+          delivey_charges_obj = obj;
+          total += obj[Qtykey] * obj[Pricekey] || 0
+          total += obj['od_dh_charges'] || 0
+        }
+      });
+    }
+    return Math.round(total)
+  }
+  ngMultiSelectModelData(data, idField, nameField, selectedIds) {
+    const modelData = [];
+    if (selectedIds && selectedIds.length) {
+      const selectedidsArray = selectedIds.split(',');
+      let obj = {}
+      for (const element of data) {
+        if (selectedidsArray.indexOf(element.customer_id.toString()) > -1) {
+          obj[idField] = element.customer_id,
+            obj[nameField] = element.name,
+            modelData.push(obj)
+        }
+      }
+    }
+    return modelData
+  }
+
+
+
+  getTotalPendingPayments(arr, Qtykey, Pricekey) {
+    let total = 0;
+    let delivey_charges_obj = {}
+    if (arr.length) {
+      arr.forEach((obj) => {
+        if (this.allowedStatus.indexOf(obj.item_status) > -1) {
+          delivey_charges_obj = obj;
+          total += obj[Qtykey] * obj[Pricekey] || 0
+          total += obj['od_dh_charges'] || 0
+        }
+      });
+      // total += arr[0]['order_dhc'] || 0
+    }
+    return Math.round(total)
+  }
+
+  sendWAppMsgForPendingPayments(customer, name, orders = []) {
+    let finalStr = `https://wa.me/+91${customer.mob_phone}/?text=*${name} ji*, %0a%0a`;
+    let totalPend = 0
+    let i = 1;
+    orders.forEach((element) => {
+      if (this.allowedStatus.indexOf(element.status) > -1 && customer.customer_id == element.customer_id) {
+        let orderPendingAmount = Math.round(this.getTotalOfNonCancelledOrderWithDeliveryCharges(element.OrderDetail, 'units', 'unit_cost') - element.TotalPaid);
+        totalPend += orderPendingAmount;
+        finalStr += `${i}. Apke ${this.datepipe.transform(element.created_on, 'mediumDate')} ke is Order ki *Rs. ${orderPendingAmount}* payment pending hai. _Check Details *here:*_ https://apnidukan.yantraworld.in/order/order-detail/${element.order_id} %0a%0a`;
+        i += 1;
+      }
+    });
+    let totalStr = totalPend ? `Final: Apke *Total Rs. ${totalPend}* payment pending hai. _Check Details *here:*_ https://apnidukan.yantraworld.in/order/history %0a%0a` : '';
+    finalStr += totalStr
+    if (totalPend) {
+      window.open(finalStr);
+    } else {
+      alert('No pending bills for ' + name);
+    }
+  }
+
 }

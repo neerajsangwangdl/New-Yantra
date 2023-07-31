@@ -2,11 +2,11 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {DomSanitizer} from '@angular/platform-browser';
 //import { ProductService } from 'src/app/services/Product/product.service';
-import { ProductService } from 'src/app/services/shared/productservice.service';
+import { ProductService } from 'src/app/services/shared/product.service';
 import { Product } from 'src/app/models/product';
 // import { AppHeaderComponent } from '../layout/app-header/app-header.component';
 //import { GlobalHttpService } from 'src/app/services/Shared/global-http.service';
-import { GlobalHttpService } from 'src/app/services/shared/global-http.service';
+import { GlobalHttpService } from 'src/app/services/shared/global-http.service.spec';
 
 @Component({
   selector: 'app-product-details',
