@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 
+
 //import { LoginComponent } from './user/login/login.component';
 //import { ResgisterComponent } from './user/resgister/resgister.component';
 //import { Authguard } from 'src/app/services/authGuard';
@@ -17,7 +18,7 @@ const routes: Routes = [
   //{ path: 'contact', canActivate: [Authguard], component: ContactusComponent },
 
   // otherwise redirect to root of this module
-  { path: '**', redirectTo: 'login' }
+  //{ path: '**', redirectTo: 'login' }
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

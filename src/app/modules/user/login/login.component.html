@@ -1,1 +1,58 @@
-<p>login works! hello commit</p>
+
+    <br>
+    <section class="register-block mt-1">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 register-sec">
+            <h2 class="text-center">Login</h2>
+    
+            <form [formGroup]="loginForm" (ngSubmit)="login">
+              
+              <div class="mb-3">
+                <label for="username" class="form-label"
+                  >Mobile No</label>
+  
+                <input
+                  type="email"
+                  class="form-control"
+                  id="username"
+                  aria-describedby="emailHelp"
+                  formControlName="username" required 
+                />
+                <div *ngIf="username.invalid && (username.dirty || username.touched)">
+                <div *ngIf="username.errors.required">Insert Valid Mobile No</div>
+                </div>
+  
+                <!-- <div id="emailHelp" class="form-text">
+                  We'll never share your email with anyone else.
+                </div> -->
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label"
+                 >Password</label
+                >
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  formControlName="password" required
+                />
+                <div *ngIf="password.invalid && (password.dirty || password.touched)">
+                  <div *ngIf="password.errors.required">Insert Valid password</div>
+              </div>
+              </div>
+              
+              <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary">Login</button>
+            </form>
+          </div>
+          <div class="col-md-12 register-sec pb-10 pt-0">
+            <a href="javascript:void(0)" routerLink="/customer/register">
+              <strong>Sign up</strong>
+            </a>
+            If you dont have an account.
+          </div>
+        </div>
+      </div>
+    </section>
+     
+  
